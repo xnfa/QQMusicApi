@@ -72,10 +72,13 @@ module.exports = {
             module: "gosrf.Stream.MvUrlProxy",
             method: "GetMvUrls",
             param: {
-              vids: id.split(','),
-              request_typet: 10001
-            }
-          }
+              vids: id.split(","),
+              request_typet: 10001,
+              addrtype: 3,
+              format: 264,
+            },
+          },
+          comm: { ct: 24, cv: 4747474, format: "json", platform: "yqq" },
         }),
       }
     });
