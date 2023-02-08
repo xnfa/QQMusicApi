@@ -66,6 +66,93 @@ module.exports = {
     cache.set(cacheKey, result, 24 * 60);
   },
 
+  "/desc/new": async ({ req, res, cache, request }) => {
+    const { singermid } = req.query;
+
+    let cacheKey = `singer_desc_new_${singermid}`;
+    let cacheData = cache.get(cacheKey);
+    if (cacheData) {
+      return res.send(cacheData);
+    }
+    if (!singermid) {
+      return res.send({
+        result: 500,
+        errMsg: "singermid 不能为空",
+      });
+    }
+
+    const result = await request({
+      url: "http://u.y.qq.com/cgi-bin/musicu.fcg",
+      data: {
+        data: JSON.stringify({
+          req_0: {
+            module: "music.musichallSinger.SingerInfoInter",
+            method: "GetSingerDetail",
+            param: {
+              singer_mids: [singermid],
+              pic: 1,
+              group_singer: 1,
+              wiki_singer: 1,
+              ex_singer: 1,
+            },
+          },
+          req_1: {
+            module: "music.musichallSong.SongListInter",
+            method: "GetSingerSongList",
+            param: {
+              singerMid: singermid,
+              begin: 0,
+              num: 10,
+              order: 1,
+            },
+          },
+          req_2: {
+            module: "music.musichallAlbum.AlbumListServer",
+            method: "GetAlbumList",
+            param: {
+              singerMid: singermid,
+              order: 1,
+              num: 30,
+              begin: 0,
+            },
+          },
+          req_6: {
+            module: "MvService.MvInfoProServer",
+            method: "GetSingerMvList",
+            param: {
+              singerid: 0,
+              singermid: singermid,
+              tagid: 0,
+              start: 0,
+              count: 6,
+              order: 1,
+            },
+          },
+          comm: {
+            uin: "0",
+            format: "json",
+            ct: 6,
+            cv: 80507,
+            platform: "wk_v17",
+          },
+        }),
+      },
+    });
+
+    cacheData = {
+      result: 100,
+      data: {
+        ...result.req_0.data.singer_list[0],
+        song: result.req_1.data,
+        album: result.req_2.data,
+        mv: result.req_6.data,
+        singermid,
+      },
+    };
+    res.send(cacheData);
+    cache.set(cacheKey, cacheData);
+  },
+
   // 获取歌手专辑
   "/album": async ({ req, res, cache, request }) => {
     const { singermid, pageNo = 1, pageSize = 20, raw } = req.query;

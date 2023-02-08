@@ -57,7 +57,6 @@ module.exports = {
     if (Number(raw)) {
       return res.send(result);
     }
-    console.log("结果", result);
 
     // 下面是数据格式的美化
     const { keyword, sum, perpage, curpage } =
