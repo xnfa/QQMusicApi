@@ -157,43 +157,43 @@ const song = {
       return res.send(cacheData);
     }
     let domain = ''
-    while (!purl && count < 10) {
+    while (!purl && count < 1) {
       count += 1;
       const result = await request({
         url: 'https://u.y.qq.com/cgi-bin/musicu.fcg',
-        data: {
-          '-': 'getplaysongvkey',
-          'g_tk': 5381,
-          loginUin: uin,
-          hostUin: 0,
-          format: 'json',
-          inCharset: 'utf8',
-          outCharset: 'utf-8¬ice=0',
-          platform: 'yqq.json',
-          needNewCode: 0,
-          data: JSON.stringify({
-            "req_0": {
-              "module": "vkey.GetVkeyServer",
-              "method": "CgiGetVkey",
-              "param": {
-                "filename": [file],
-                "guid": guid,
-                "songmid": [id],
-                "songtype": [0],
-                "uin": uin,
-                "loginflag": 1,
-                "platform": "20",
-              }
-            },
-            "comm": {
+        method: 'post',
+        data: JSON.stringify({
+          "comm": {
+            "cv": 4747474,
+            "ct": 24,
+            "format": "json",
+            "inCharset": "utf-8",
+            "outCharset": "utf-8",
+            "notice": 0,
+            "platform": "yqq.json",
+            "needNewCode": 1,
+            "uin": uin,
+          },
+          "req_0": {
+            "module": "vkey.GetVkeyServer",
+            "method": "CgiGetVkey",
+            "param": {
+              "guid": guid,
+              "songmid": [
+                id
+              ],
+              "songtype": [
+                0
+              ],
               "uin": uin,
-              "format": "json",
-              "ct": 19,
-              "cv": 0,
-              "authst": qqmusic_key,
+              "loginflag": 1,
+              "platform": "20"
             }
-          })
-        }
+          }
+        }),
+        headers: {
+          Referer: "https://y.qq.com",
+        },
       });
       if (res && !result.req_0.data) {
         return res.send({

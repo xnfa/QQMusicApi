@@ -3,7 +3,7 @@ const StringHelper = require("./StringHelper");
 const xml2js = require("xml2js").parseString;
 const { default: PQueue } = require("p-queue");
 
-const queue = new PQueue({ concurrency: 2, intervalCap: 1, interval: 500 });
+const queue = new PQueue({ concurrency: 15, intervalCap: 4, interval: 500 });
 
 function handleXml(data) {
   return new Promise((resolve, reject) => {
