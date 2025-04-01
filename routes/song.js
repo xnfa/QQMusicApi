@@ -112,102 +112,62 @@ const song = {
       uin = req.cookies.uin || uin;
     }
 
-    const { id, type = "128", mediaId = id, isRedirect = "0" } = obj;
-    const typeMap = {
-      m4a: {
-        s: "C400",
-        e: ".m4a",
-      },
-      128: {
-        s: "M500",
-        e: ".mp3",
-      },
-      320: {
-        s: "M800",
-        e: ".mp3",
-      },
-      ape: {
-        s: "A000",
-        e: ".ape",
-      },
-      flac: {
-        s: "F000",
-        e: ".flac",
-      },
-    };
-    const typeObj = typeMap[type];
-
-    if (!typeObj) {
-      return res.send({
-        result: 500,
-        errMsg: "type 传错了，看看文档去",
-      });
-    }
+    const { id, isRedirect = "0" } = obj;
     if (!id) {
       return res.send({
         result: 500,
         errMsg: "id ?",
       });
     }
-    const file = `${typeObj.s}${id}${mediaId}${typeObj.e}`;
     const guid = (Math.random() * 10000000).toFixed(0);
 
     let purl = "";
-    let count = 0;
-    let cacheKey = `song_url_${file}`;
-    let cacheData = cache.get(cacheKey);
-    if (cacheData) {
-      return res.send(cacheData);
-    }
     let domain = "";
-    while (!purl && count < 1) {
-      count += 1;
-      const result = await request({
-        url: "https://u.y.qq.com/cgi-bin/musicu.fcg",
-        method: "post",
-        data: JSON.stringify({
-          comm: {
-            cv: 4747474,
-            ct: 24,
-            format: "json",
-            inCharset: "utf-8",
-            outCharset: "utf-8",
-            notice: 0,
-            platform: "yqq.json",
-            needNewCode: 1,
-            uin: uin,
-          },
-          req_0: {
-            module: "vkey.GetVkeyServer",
-            method: "CgiGetVkey",
-            param: {
-              guid: guid,
-              songmid: [id],
-              songtype: [0],
-              uin: uin,
-              loginflag: 1,
-              platform: "20",
-            },
-          },
-        }),
-        headers: {
-          Referer: "https://y.qq.com",
+    const result = await request({
+      url: "https://u.y.qq.com/cgi-bin/musicu.fcg",
+      method: "post",
+      data: JSON.stringify({
+        comm: {
+          cv: 4747474,
+          ct: 24,
+          format: "json",
+          inCharset: "utf-8",
+          outCharset: "utf-8",
+          notice: 0,
+          platform: "yqq.json",
+          needNewCode: 1,
+          uin: uin,
         },
+        req_0: {
+          module: "vkey.GetVkeyServer",
+          method: "CgiGetVkey",
+          param: {
+            guid: guid,
+            songmid: [id],
+            songtype: [0],
+            uin: uin,
+            loginflag: 1,
+            platform: "20",
+          },
+        },
+      }),
+      headers: {
+        Referer: "https://y.qq.com",
+      },
+    });
+    if (res && !result.req_0.data) {
+      return res.send({
+        result: 400,
+        errMsg: "获取链接出错，建议检查是否携带 cookie ",
       });
-      if (res && !result.req_0.data) {
-        return res.send({
-          result: 400,
-          errMsg: "获取链接出错，建议检查是否携带 cookie ",
-        });
-      }
-      if (result.req_0 && result.req_0.data && result.req_0.data.midurlinfo) {
-        purl = result.req_0.data.midurlinfo[0].purl;
-      }
-      if (domain === "") {
-        domain =
-          result.req_0.data.sip.find((i) => !i.startsWith("http://ws")) ||
-          result.req_0.data.sip[0];
-      }
+    }
+    if (result.req_0 && result.req_0.data && result.req_0.data.midurlinfo) {
+      purl = result.req_0.data.midurlinfo[0].purl;
+    }
+    if (domain === "") {
+      domain =
+        result.req_0.data.sip.find((i) => !i.startsWith("http://ws")) ||
+        result.req_0.data.sip[0];
     }
     if (!purl) {
       return res.send({
