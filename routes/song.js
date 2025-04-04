@@ -185,7 +185,6 @@ const song = {
       result: 100,
     };
     res.send(cacheData);
-    cache.set(cacheKey, cacheData);
   },
 
   "/urls": async ({ req, res, request, globalCookie, cache }) => {
@@ -327,6 +326,7 @@ const song = {
       },
     };
     const sign = getSign(data);
+    console.log(sign);
     const result = await request(
       {
         url: `http://u6.y.qq.com/cgi-bin/musics.fcg?sign=${sign}`,
