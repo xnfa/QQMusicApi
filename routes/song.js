@@ -301,7 +301,6 @@ const song = {
 
   "/topdata": async ({ req, res, request }) => {
     const { id, raw } = req.query;
-    console.log(id);
     if (!id) {
       return res.send({
         result: 500,
@@ -347,7 +346,7 @@ const song = {
     }
     return res.send({
       result: 100,
-      data: result.req_0.data?.data[id],
+      data: result.req_0.data?.data ? result.req_0.data?.data[id] : null,
     });
   },
 
