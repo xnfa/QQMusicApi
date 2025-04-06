@@ -326,7 +326,6 @@ const song = {
       },
     };
     const sign = getSign(data);
-    console.log(sign);
     const result = await request(
       {
         url: `http://u6.y.qq.com/cgi-bin/musics.fcg?sign=${sign}`,
