@@ -1,5 +1,6 @@
-const qqMusic = require('./index');
+const qqMusic = require("./index");
 
-qqMusic.api('album', {albummid: '002MAeob3zLXwZ'})
-  .then(res => console.log('result', res))
-  .catch(err => console.error('error: ', err.message));
+qqMusic
+  .api("song/topdata", { id: "0029vb0r2T9PE4" })
+  .then((res) => console.log("result", res))
+  .catch((err) => console.error("error: ", err.message));
