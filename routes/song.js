@@ -15,7 +15,7 @@ const song = {
     const data = {
       data: JSON.stringify({
         songinfo: {
-          method: "get_song_detail_yqq",
+          method: "get_song_detail",
           module: "music.pf_song_detail_svr",
           param: {
             song_mid: songmid,
