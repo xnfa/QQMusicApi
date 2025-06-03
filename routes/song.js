@@ -42,13 +42,9 @@ const song = {
         result: 100,
         data: {
           ...result.songinfo.data,
-          info_app: result.songinfo_app.data.info,
+          info_app: result.songinfo_app.data?.info,
         },
       });
-    return {
-      ...result.songinfo.data,
-      info_app: result.songinfo_app.data.info,
-    };
   },
 
   "/batch": async ({ req, res }) => {
