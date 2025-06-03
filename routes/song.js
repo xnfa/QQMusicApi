@@ -15,6 +15,13 @@ const song = {
     const data = {
       data: JSON.stringify({
         songinfo: {
+          method: "get_song_detail_yqq",
+          module: "music.pf_song_detail_svr",
+          param: {
+            song_mid: songmid,
+          },
+        },
+        songinfo_app: {
           method: "get_song_detail",
           module: "music.pf_song_detail_svr",
           param: {
@@ -33,9 +40,15 @@ const song = {
     res &&
       res.send({
         result: 100,
-        data: result.songinfo.data,
+        data: {
+          ...result.songinfo.data,
+          info_app: result.songinfo_app.data.info,
+        },
       });
-    return result.songinfo.data;
+    return {
+      ...result.songinfo.data,
+      info_app: result.songinfo_app.data.info,
+    };
   },
 
   "/batch": async ({ req, res }) => {
