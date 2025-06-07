@@ -40,6 +40,7 @@ const user = {
     const result = await request({ url });
 
     if (result.req1 && result.req1.data && result.req1.data.musickey) {
+      const musicKey = result.req1.data.musickey;
       return res.send({
         result: 100,
         data: {
