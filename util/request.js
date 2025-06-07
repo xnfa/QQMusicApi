@@ -2,7 +2,8 @@ const axios = require("axios");
 const StringHelper = require("./StringHelper");
 const xml2js = require("xml2js").parseString;
 const { default: PQueue } = require("p-queue");
-
+const curlirize = require("axios-curlirize");
+curlirize(axios);
 const queue = new PQueue({ concurrency: 15, intervalCap: 4, interval: 500 });
 
 function handleXml(data) {
@@ -57,7 +58,7 @@ module.exports = (req, res, { globalCookie } = {}) => {
       obj.headers.Cookie = Object.keys(cookieObj)
         .map((k) => `${k}=${encodeURI(cookieObj[k])}`)
         .join("; ");
-
+      console.log(obj);
       const response = await queue.add(() => axios(obj));
 
       if (opts.dataType === "xml") {
