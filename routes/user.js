@@ -22,12 +22,12 @@ const user = {
         module: "QQConnectLogin.LoginServer",
         method: "QQLogin",
         param: {
-          expired_in: 7776000, //不用管
+          // expired_in: 7776000, //不用管
           // onlyNeedAccessToken: 0, //不用管
           // forceRefreshToken: 0, //不用管
           // access_token: "6B0C62126368CA1ACE16C932C679747E", //access_token
           // refresh_token: "25BACF1650EE2592D06BCC19EEAD7AD6", //refresh_token
-          musicid: uin, //uin或者web_uin 微信没试过
+          musicid: Number(uin), //uin或者web_uin 微信没试过
           musickey: qm_keyst || qqmusic_key, //key
         },
       },
@@ -92,7 +92,14 @@ const user = {
       userCookie.uin = userCookie.wxuin;
     }
     userCookie.uin = (userCookie.uin || '').replace(/\D/g, '');
-    allCookies[userCookie.uin] = userCookie;
+
+    // 只保留uin和qm_keyst
+    const filteredCookie = {
+      uin: userCookie.uin,
+      qm_keyst: userCookie.qm_keyst || ''
+    };
+
+    allCookies[userCookie.uin] = filteredCookie;
     jsonFile.writeFile('data/allCookies.json', allCookies);
 
     // 这里写死我的企鹅号，作为存在服务器上的cookie
@@ -100,6 +107,7 @@ const user = {
       globalCookie.updateUserCookie(userCookie);
       jsonFile.writeFile('data/cookie.json', userCookie);
     }
+    
     res.set('Access-Control-Allow-Origin', 'https://y.qq.com');
     res.set('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE');
     res.set('Access-Control-Allow-Headers', 'Content-Type');
